@@ -3,24 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users.entity';
 import { NotFoundException } from '@nestjs/common';
+import { CurrentUserDto } from '../dtos/get-current-user.dto';
 
-export class GetUserByIdQuery {
+export class GetCurrentUserQuery {
 	constructor(public readonly id: string) {}
 }
 
-@QueryHandler(GetUserByIdQuery)
-export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
+@QueryHandler(GetCurrentUserQuery)
+export class GetCurrentUserHandler
+	implements IQueryHandler<GetCurrentUserQuery>
+{
 	constructor(
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
 	) {}
 
-	async execute(query: GetUserByIdQuery): Promise<User> {
+	async execute(query: GetCurrentUserQuery): Promise<CurrentUserDto> {
 		const user = await this.userRepository.findOne({ where: { id: query.id } });
 
 		if (!user) {
-			throw new NotFoundException(`User with ID ${query.id} not found`);
+			throw new NotFoundException('User not found');
 		}
 
-		return user;
+		return { id: user.id, email: user.email };
 	}
 }

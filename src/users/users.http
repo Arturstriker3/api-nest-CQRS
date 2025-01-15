@@ -1,4 +1,4 @@
 
-# list users
-GET http://localhost:4000/users
-
+# list user data
+GET http://localhost:4000/users/724a8628-55bf-4535-9392-81d99f184b2b
+Authorization: Bearer <TOKEN_JWT_AQUI>

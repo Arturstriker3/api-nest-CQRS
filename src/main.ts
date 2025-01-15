@@ -9,8 +9,8 @@ dotenv.config();
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	const config = new DocumentBuilder()
-		.setTitle('API NestJS')
-		.setDescription('Documentação automática da API usando Swagger')
+		.setTitle('NestJS API')
+		.setDescription('API documentation for NestJS')
 		.setVersion('1.0')
 		.addBearerAuth()
 		.build();
