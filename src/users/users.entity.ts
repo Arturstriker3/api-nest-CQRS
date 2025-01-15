@@ -33,6 +33,9 @@ export class User {
 	})
 	subscription: Subscription;
 
+	@Column({ nullable: true })
+	refreshToken: string;
+
 	@CreateDateColumn()
 	createdAt: Date;
 

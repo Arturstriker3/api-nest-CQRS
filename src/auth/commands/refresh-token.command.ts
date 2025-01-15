@@ -2,18 +2,18 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../users/users.entity';
-import { BadRequestException, Inject } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { Inject, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUserDto } from '../dtos/login-user.dto';
 import { ConfigService } from '@nestjs/config';
 
-export class LoginUserCommand {
-	constructor(public readonly data: LoginUserDto) {}
+export class RefreshTokenCommand {
+	constructor(public readonly refreshToken: string) {}
 }
 
-@CommandHandler(LoginUserCommand)
-export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
+@CommandHandler(RefreshTokenCommand)
+export class RefreshTokenHandler
+	implements ICommandHandler<RefreshTokenCommand>
+{
 	constructor(
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
 		private readonly jwtService: JwtService,
@@ -21,14 +21,17 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
 	) {}
 
 	async execute(
-		command: LoginUserCommand,
+		command: RefreshTokenCommand,
 	): Promise<{ access_token: string; refresh_token: string }> {
-		const { email, password } = command.data;
+		const { refreshToken } = command;
 
-		const user = await this.userRepository.findOne({ where: { email } });
+		const decoded = this.jwtService.verify(refreshToken);
+		const user = await this.userRepository.findOne({
+			where: { id: decoded.id, refreshToken },
+		});
 
-		if (!user || !(await bcrypt.compare(password, user.password))) {
-			throw new BadRequestException('Invalid email or password');
+		if (!user) {
+			throw new UnauthorizedException('Invalid or expired refresh token');
 		}
 
 		const accessTokenExpiration = this.configService.get(
@@ -39,16 +42,16 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
 		);
 
 		const payload = { id: user.id, email: user.email };
-		const access_token = this.jwtService.sign(payload, {
+		const newAccessToken = this.jwtService.sign(payload, {
 			expiresIn: accessTokenExpiration,
 		});
-		const refresh_token = this.jwtService.sign(payload, {
+		const newRefreshToken = this.jwtService.sign(payload, {
 			expiresIn: refreshTokenExpiration,
 		});
 
-		user.refreshToken = refresh_token;
+		user.refreshToken = newRefreshToken;
 		await this.userRepository.save(user);
 
-		return { access_token, refresh_token };
+		return { access_token: newAccessToken, refresh_token: newRefreshToken };
 	}
 }

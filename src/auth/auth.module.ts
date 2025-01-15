@@ -8,10 +8,19 @@ import { User } from '../users/users.entity';
 import { RegisterUserHandler } from './commands/register-user.command';
 import { LoginUserHandler } from './commands/login-user.command';
 import { JwtStrategy } from './jwt.strategy';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RefreshTokenHandler } from './commands/refresh-token.command';
+import authConfig from '../config/auth.config';
+
+const CommandHandlers = [
+	RegisterUserHandler,
+	LoginUserHandler,
+	RefreshTokenHandler,
+];
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({ isGlobal: true, load: [authConfig] }),
 		TypeOrmModule.forFeature([User]),
 		CqrsModule,
 		PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -19,12 +28,12 @@ import { ConfigService } from '@nestjs/config';
 			inject: [ConfigService],
 			useFactory: (configService: ConfigService) => ({
 				secret: configService.get('JWT_SECRET'),
-				signOptions: { expiresIn: '2d' },
+				signOptions: { expiresIn: configService.get('auth.accessTokenExpiration') },
 			}),
 		}),
 	],
 	controllers: [AuthController],
-	providers: [RegisterUserHandler, LoginUserHandler, JwtStrategy],
+	providers: [...CommandHandlers, JwtStrategy],
 	exports: [JwtModule, PassportModule, JwtStrategy],
 })
 export class AuthModule {}

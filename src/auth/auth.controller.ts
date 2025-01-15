@@ -5,6 +5,7 @@ import { RegisterUserCommand } from './commands/register-user.command';
 import { LoginUserCommand } from './commands/login-user.command';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { LoginUserDto } from './dtos/login-user.dto';
+import { RefreshTokenCommand } from './commands/refresh-token.command';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -25,5 +26,13 @@ export class AuthController {
 	@ApiResponse({ status: 400, description: 'Bad request' })
 	async login(@Body(ValidationPipe) data: LoginUserDto) {
 		return this.commandBus.execute(new LoginUserCommand(data));
+	}
+
+	@Post('refresh')
+	@ApiOperation({ summary: 'Refresh token' })
+	@ApiResponse({ status: 200, description: 'New access token' })
+	@ApiResponse({ status: 401, description: 'Unauthorized' })
+	async refresh(@Body('refresh_token') refreshToken: string) {
+		return this.commandBus.execute(new RefreshTokenCommand(refreshToken));
 	}
 }
