@@ -2,7 +2,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../users/users.entity';
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Inject,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
@@ -25,7 +29,19 @@ export class RefreshTokenHandler
 	): Promise<{ access_token: string; refresh_token: string }> {
 		const { refreshToken } = command;
 
-		const decoded = this.jwtService.verify(refreshToken);
+		if (!refreshToken) {
+			throw new BadRequestException('Refresh token is required');
+		}
+
+		let decoded;
+		try {
+			decoded = this.jwtService.verify(refreshToken);
+		} catch (error) {
+			throw new UnauthorizedException(
+				`Invalid or expired refresh token: ${error.message}`,
+			);
+		}
+
 		const user = await this.userRepository.findOne({
 			where: { id: decoded.id, refreshToken },
 		});

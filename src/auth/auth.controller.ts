@@ -11,6 +11,7 @@ import {
 	ApiOperation,
 	ApiResponse,
 	ApiBearerAuth,
+	ApiBody,
 } from '@nestjs/swagger';
 import { RegisterUserCommand } from './commands/register-user.command';
 import { LoginUserCommand } from './commands/login-user.command';
@@ -21,6 +22,9 @@ import { LogoutUserCommand } from './commands/logout-user.command';
 import { CurrentUserDto } from './dtos/current-user.dto';
 import { CurrentUser } from './decorators/current-user-decorator';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { RegisterUserResponseDto } from './dtos/register-user-response.dto';
+import { LoginUserResponseDto } from './dtos/login-user-response.dto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -29,7 +33,11 @@ export class AuthController {
 
 	@Post('register')
 	@ApiOperation({ summary: 'Register user' })
-	@ApiResponse({ status: 201, description: 'User created' })
+	@ApiResponse({
+		status: 201,
+		description: 'User created',
+		type: RegisterUserResponseDto,
+	})
 	@ApiResponse({ status: 400, description: 'Bad request' })
 	async register(@Body(ValidationPipe) data: RegisterUserDto) {
 		return this.commandBus.execute(new RegisterUserCommand(data));
@@ -37,7 +45,11 @@ export class AuthController {
 
 	@Post('login')
 	@ApiOperation({ summary: 'Login user' })
-	@ApiResponse({ status: 200, description: 'User logged in' })
+	@ApiResponse({
+		status: 200,
+		description: 'User logged in',
+		type: LoginUserResponseDto,
+	})
 	@ApiResponse({ status: 400, description: 'Bad request' })
 	async login(@Body(ValidationPipe) data: LoginUserDto) {
 		return this.commandBus.execute(new LoginUserCommand(data));
@@ -56,7 +68,12 @@ export class AuthController {
 
 	@Post('refresh')
 	@ApiOperation({ summary: 'Refresh token' })
-	@ApiResponse({ status: 200, description: 'New access token' })
+	@ApiBody({ type: RefreshTokenDto })
+	@ApiResponse({
+		status: 200,
+		description: 'New access token',
+		type: LoginUserResponseDto,
+	})
 	@ApiResponse({ status: 401, description: 'Unauthorized' })
 	async refresh(@Body('refresh_token') refreshToken: string) {
 		return this.commandBus.execute(new RefreshTokenCommand(refreshToken));
