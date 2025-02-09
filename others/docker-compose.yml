@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres_primary:
+    image: postgres:17-alpine
+    container_name: postgres_primary
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: admin
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U admin --dbname=postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+
+  postgres_replica:
+    image: postgres:17-alpine
+    container_name: postgres_replica
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: admin
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U admin --dbname=postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_primary_data:
+  postgres_replica_data:

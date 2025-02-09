@@ -37,7 +37,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 				logging: true,
 				entities: [__dirname + '/**/*.entity{.ts,.js}'],
 				migrations: [__dirname + '/migrations/*{.ts,.js}'],
-				migrationsRun: false,
+				migrationsRun: true,
 			}),
 		}),
 
