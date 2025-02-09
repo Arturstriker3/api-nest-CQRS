@@ -14,6 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 			inject: [ConfigService],
 			useFactory: (configService: ConfigService) => ({
 				type: 'postgres',
+				defaultMode: 'master',
 				replication: {
 					master: {
 						host: configService.get<string>('DB_MASTER_HOST'),
