@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { CustomLogger } from './config/logger.config';
 
 dotenv.config();
 
@@ -20,12 +21,10 @@ async function setupSwagger(app) {
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-
 	await setupSwagger(app);
-
 	app.useGlobalPipes(new ValidationPipe());
-
 	const port = process.env.PORT || 3000;
+	app.useLogger(app.get(CustomLogger));
 	await app.listen(port);
 	console.log(`🚀 Listening on port ${port}`);
 }

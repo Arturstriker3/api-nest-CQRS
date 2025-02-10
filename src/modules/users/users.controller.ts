@@ -14,8 +14,8 @@ import {
 } from '@nestjs/swagger';
 import { GetUserByIdQuery } from './queries/get-user-by-id.query';
 import { GetUserByIdDto } from './dtos/get-user-by-id.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { CurrentUser } from 'src/auth/decorators/current-user-decorator';
+import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { CurrentUser } from 'src/modules/auth/decorators/current-user-decorator';
 import { CurrentUserDto } from './dtos/get-current-user.dto';
 import { GetCurrentUserQuery } from './queries/get-current-user.query';
 

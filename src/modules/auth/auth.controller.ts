@@ -4,6 +4,7 @@ import {
 	Body,
 	ValidationPipe,
 	UseGuards,
+	Logger,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import {
@@ -30,6 +31,7 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 @Controller('auth')
 export class AuthController {
 	constructor(private readonly commandBus: CommandBus) {}
+	private readonly logger = new Logger(AuthController.name);
 
 	@Post('register')
 	@ApiOperation({ summary: 'Register user' })
@@ -40,6 +42,8 @@ export class AuthController {
 	})
 	@ApiResponse({ status: 400, description: 'Bad request' })
 	async register(@Body(ValidationPipe) data: RegisterUserDto) {
+		this.logger.log('📝 Registering user');
+		this.logger.debug(data);
 		return this.commandBus.execute(new RegisterUserCommand(data));
 	}
 

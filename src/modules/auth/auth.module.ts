@@ -10,7 +10,7 @@ import { LoginUserHandler } from './commands/login-user.command';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RefreshTokenHandler } from './commands/refresh-token.command';
-import authConfig from '../config/auth.config';
+import authConfig from '../../config/auth.config';
 import { LogoutUserHandler } from './commands/logout-user.command';
 
 const CommandHandlers = [
