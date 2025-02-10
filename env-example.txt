@@ -13,9 +13,5 @@ JWT_SECRET=secret12345
 JWT_ACCESS_EXPIRATION=1h  # 1 hora
 JWT_REFRESH_EXPIRATION=7d  # 7 dias
 
-LOG_RULES="
-    context=
-    AuthController
-    ;level=debug
-    /level=error
-"
+LOG_LEVEL=error
+LOG_CONTEXTS="AuthController=debug"

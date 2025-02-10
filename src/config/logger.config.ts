@@ -48,46 +48,40 @@ export class CustomLogger implements LoggerService {
 	}
 
 	private initializeContextRules() {
-		const rules = process.env.LOG_CONTEXT_RULES;
-		if (!rules) {
-			CustomLogger.contexRules['*'] = this.LOG_LEVEL_MAP['info'];
-			return;
-		}
+		const globalLogLevel = process.env.LOG_LEVEL?.trim() || 'info';
+		CustomLogger.contexRules['*'] =
+			this.LOG_LEVEL_MAP[globalLogLevel] ?? this.LOG_LEVEL_MAP['info'];
 
-		const ruleEntries = rules.split('/');
-		for (const rule of ruleEntries) {
-			let contextPart = '*';
-			let levelPart = 'info';
-			const parts = rule.split(';');
-
-			for (const part of parts) {
-				if (part.startsWith('context=')) {
-					contextPart = part.split('=')[1] || contextPart;
-				} else if (part.startsWith('level=')) {
-					levelPart = part.split('=')[1] || levelPart;
+		const contextRules = process.env.LOG_CONTEXTS;
+		if (contextRules) {
+			const rules = contextRules.split(',');
+			for (const rule of rules) {
+				const [context, level] = rule.split('=').map((s) => s.trim());
+				if (context && level && this.LOG_LEVEL_MAP[level]) {
+					CustomLogger.contexRules[context] = this.LOG_LEVEL_MAP[level];
 				}
 			}
-
-			const contexts = contextPart.split(',');
-			const numericLevel =
-				this.LOG_LEVEL_MAP[levelPart.trim()] || this.LOG_LEVEL_MAP['info'];
-
-			for (const context of contexts) {
-				CustomLogger.contexRules[context.trim()] = numericLevel;
-			}
 		}
-	}
-
-	private shouldLog(methodLevel: string, context: string): boolean {
-		return this.LOG_LEVEL_MAP[methodLevel] >= this.getLogLevel(context);
 	}
 
 	private getLogLevel(context?: string): number {
 		context = context || '';
-		const level =
-			CustomLogger.contexRules[context] ??
-			CustomLogger.contexRules['*'] ??
-			this.LOG_LEVEL_MAP['info'];
-		return level;
+
+		if (CustomLogger.contexRules[context] !== undefined) {
+			return CustomLogger.contexRules[context];
+		}
+
+		return CustomLogger.contexRules['*'];
+	}
+
+	private shouldLog(methodLevel: string, context: string): boolean {
+		const methodLevelNum = this.LOG_LEVEL_MAP[methodLevel];
+		const currentLevelNum = this.getLogLevel(context);
+
+		// console.log(
+		// 	`🧐 Checking log level: method=${methodLevel} (${methodLevelNum}), context=${context}, allowed=${currentLevelNum}`,
+		// );
+
+		return methodLevelNum >= currentLevelNum;
 	}
 }
