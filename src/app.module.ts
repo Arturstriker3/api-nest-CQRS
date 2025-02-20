@@ -35,8 +35,8 @@ import { CustomLogger } from './config/logger.config';
 						},
 					],
 				},
-				synchronize: false,
-				logging: true,
+				synchronize: configService.get<string>('ORM_SYNC') === 'true',
+				logging: configService.get<string>('ORM_LOGGING') === 'true',
 				entities: [__dirname + '/**/*.entity{.ts,.js}'],
 				migrations: [__dirname + '/migrations/*{.ts,.js}'],
 				migrationsRun: true,
@@ -46,7 +46,16 @@ import { CustomLogger } from './config/logger.config';
 		CqrsModule,
 		AuthModule,
 		UsersModule,
-		LoggerModule.forRoot({ pinoHttp: { level: 'trace' } }),
+
+		LoggerModule.forRootAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (configService: ConfigService) => ({
+				pinoHttp: {
+					level: configService.get<string>('LOG_LEVEL') || 'trace',
+				},
+			}),
+		}),
 	],
 	providers: [CustomLogger],
 	exports: [CustomLogger],
