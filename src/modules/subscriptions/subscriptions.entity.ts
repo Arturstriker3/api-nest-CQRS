@@ -37,6 +37,9 @@ export class Subscription {
 	@Column({ type: 'int', default: SubscriptionLimits[SubscriptionPlan.FREE] })
 	maxProjects: number;
 
+	@Column({ type: 'timestamp', nullable: true })
+	expiresAt?: Date;
+
 	@OneToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
 	@JoinColumn()
 	user: User;

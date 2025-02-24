@@ -11,19 +11,27 @@ import {
 import { Project } from '../projects/projects.entity';
 import { Subscription } from '../subscriptions/subscriptions.entity';
 
+export enum UserRole {
+	USER = 'user',
+	ADMIN = 'admin',
+}
+
 @Entity()
 export class User {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@Column()
+	@Column({ type: 'varchar', length: 255 })
 	name: string;
 
-	@Column({ unique: true })
+	@Column({ type: 'varchar', length: 255, unique: true })
 	email: string;
 
-	@Column()
+	@Column({ type: 'varchar', length: 255 })
 	password: string;
+
+	@Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+	role: UserRole;
 
 	@OneToMany(() => Project, (project) => project.owner)
 	projects: Project[];
@@ -33,7 +41,7 @@ export class User {
 	})
 	subscription: Subscription;
 
-	@Column({ nullable: true })
+	@Column({ type: 'varchar', length: 512, nullable: true })
 	refreshToken: string;
 
 	@CreateDateColumn()
