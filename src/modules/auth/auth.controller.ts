@@ -72,7 +72,7 @@ export class AuthController {
 	@ApiOperation({ summary: 'Refresh token' })
 	@ApiBody({ type: RefreshTokenDto })
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		description: 'New access token',
 		type: LoginUserResponseDto,
 	})

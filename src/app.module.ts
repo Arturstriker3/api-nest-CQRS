@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
 import { CustomLogger } from './config/logger.config';
+import { SeedModule } from './seeds/seed.module';
 
 @Module({
 	imports: [
@@ -47,6 +48,7 @@ import { CustomLogger } from './config/logger.config';
 		AuthModule,
 		UsersModule,
 
+		SeedModule,
 		LoggerModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
