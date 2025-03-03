@@ -20,6 +20,7 @@ import { CurrentUserDto } from './dtos/get-current-user.dto';
 import { GetCurrentUserQuery } from './queries/get-current-user.query';
 import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
 import { IsAdmin } from '../auth/decorators/is-admin.decorator';
+import { GetUserResponseDto } from './dtos/get-user-by-id-response.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -43,7 +44,11 @@ export class UserController {
 	@IsAdmin()
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@ApiOperation({ summary: 'Get user by id' })
-	@ApiResponse({ status: 200, description: 'User found' })
+	@ApiResponse({
+		status: 200,
+		description: 'User found',
+		type: GetUserResponseDto,
+	})
 	@ApiResponse({ status: 400, description: 'Invalid UUID format' })
 	@ApiResponse({
 		status: 401,

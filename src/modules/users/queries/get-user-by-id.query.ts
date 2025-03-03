@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users.entity';
 import { NotFoundException } from '@nestjs/common';
+import { GetUserResponseDto } from '../dtos/get-user-by-id-response.dto';
 
 export class GetUserByIdQuery {
 	constructor(public readonly id: string) {}
@@ -14,7 +15,7 @@ export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
 	) {}
 
-	async execute(query: GetUserByIdQuery): Promise<Omit<User, 'password'>> {
+	async execute(query: GetUserByIdQuery): Promise<GetUserResponseDto> {
 		const user = await this.userRepository.findOne({
 			where: { id: query.id },
 			select: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
