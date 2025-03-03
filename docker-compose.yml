@@ -30,6 +30,7 @@ services:
       -c hot_standby_feedback=on
     volumes:
       - ./00_init.sql:/docker-entrypoint-initdb.d/00_init.sql
+      - postgres_primary_data:/var/lib/postgresql/data
 
   postgres_replica:
     <<: *postgres-common
@@ -49,5 +50,11 @@ services:
       chmod 0700 /var/lib/postgresql/data
       postgres
       "
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
     depends_on:
       - postgres_primary
+
+volumes:
+  postgres_primary_data:
+  postgres_replica_data:
