@@ -110,6 +110,10 @@ export class PlansController {
 	@ApiResponse({ status: 400, description: 'Bad request' })
 	@ApiResponse({ status: 401, description: 'Unauthorized' })
 	@ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
+	@ApiResponse({
+		status: 409,
+		description: 'Conflict - Plan name already exists',
+	})
 	async createPlan(@Body(ValidationPipe) createPlanDto: CreatePlanDto) {
 		return this.commandBus.execute(new CreatePlanCommand(createPlanDto));
 	}
@@ -130,6 +134,10 @@ export class PlansController {
 	@ApiResponse({ status: 401, description: 'Unauthorized' })
 	@ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
 	@ApiResponse({ status: 404, description: 'Plan not found' })
+	@ApiResponse({
+		status: 409,
+		description: 'Conflict - Plan name already exists',
+	})
 	async updatePlan(
 		@Param(ValidationPipe) params: GetPlanByIdDto,
 		@Body(ValidationPipe) updatePlanDto: UpdatePlanDto,

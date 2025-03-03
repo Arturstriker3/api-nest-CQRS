@@ -22,19 +22,14 @@ export class GetPlansHandler implements IQueryHandler<GetPlansQuery> {
 			sortOrder = 'DESC',
 		} = getPlansDto;
 
-		// Calculate skip value for pagination
 		const skip = (page - 1) * limit;
 
-		// Create query builder
 		const queryBuilder = this.planRepository.createQueryBuilder('plan');
 
-		// Apply sorting
 		queryBuilder.orderBy(`plan.${sortBy}`, sortOrder as 'ASC' | 'DESC');
 
-		// Apply pagination
 		queryBuilder.skip(skip).take(limit);
 
-		// Execute query
 		const [plans, total] = await queryBuilder.getManyAndCount();
 
 		return {
