@@ -10,6 +10,6 @@ export class SeedService {
 	async seed() {
 		this.logger.log('🔄 Starting seed...');
 		await this.userFactory.createSuperAdmin();
-		this.logger.log('✅ Ending seed');
+		this.logger.log('✅ Ended seed');
 	}
 }

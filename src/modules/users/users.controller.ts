@@ -14,10 +14,12 @@ import {
 } from '@nestjs/swagger';
 import { GetUserByIdQuery } from './queries/get-user-by-id.query';
 import { GetUserByIdDto } from './dtos/get-user-by-id.dto';
-import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/modules/auth/decorators/current-user-decorator';
 import { CurrentUserDto } from './dtos/get-current-user.dto';
 import { GetCurrentUserQuery } from './queries/get-current-user.query';
+import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
+import { IsAdmin } from '../auth/decorators/is-admin.decorator';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -38,7 +40,8 @@ export class UserController {
 	}
 
 	@Get(':id')
-	@UseGuards(JwtAuthGuard)
+	@IsAdmin()
+	@UseGuards(JwtAuthGuard, AdminGuard)
 	@ApiOperation({ summary: 'Get user by id' })
 	@ApiResponse({ status: 200, description: 'User found' })
 	@ApiResponse({ status: 400, description: 'Invalid UUID format' })
@@ -46,6 +49,7 @@ export class UserController {
 		status: 401,
 		description: 'Unauthorized - Token missing or invalid',
 	})
+	@ApiResponse({ status: 403, description: 'Forbidden' })
 	@ApiResponse({ status: 404, description: 'User not found' })
 	async getUserById(@Param(ValidationPipe) params: GetUserByIdDto) {
 		return this.queryBus.execute(new GetUserByIdQuery(params.id));

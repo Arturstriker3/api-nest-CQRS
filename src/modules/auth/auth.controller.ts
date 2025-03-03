@@ -22,7 +22,7 @@ import { RefreshTokenCommand } from './commands/refresh-token.command';
 import { LogoutUserCommand } from './commands/logout-user.command';
 import { CurrentUserDto } from './dtos/current-user.dto';
 import { CurrentUser } from './decorators/current-user-decorator';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterUserResponseDto } from './dtos/register-user-response.dto';
 import { LoginUserResponseDto } from './dtos/login-user-response.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
