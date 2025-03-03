@@ -24,6 +24,6 @@ export class GetCurrentUserHandler
 			throw new NotFoundException('User not found');
 		}
 
-		return { id: user.id, email: user.email };
+		return { id: user.id, name: user.name, email: user.email };
 	}
 }

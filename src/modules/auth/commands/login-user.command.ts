@@ -38,7 +38,7 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
 			'auth.refreshTokenExpiration',
 		);
 
-		const payload = { id: user.id, email: user.email };
+		const payload = { id: user.id, email: user.email, role: user.role };
 		const access_token = this.jwtService.sign(payload, {
 			expiresIn: accessTokenExpiration,
 		});

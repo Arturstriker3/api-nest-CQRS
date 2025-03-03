@@ -57,7 +57,7 @@ export class RefreshTokenHandler
 			'auth.refreshTokenExpiration',
 		);
 
-		const payload = { id: user.id, email: user.email };
+		const payload = { id: user.id, email: user.email, role: user.role };
 		const newAccessToken = this.jwtService.sign(payload, {
 			expiresIn: accessTokenExpiration,
 		});

@@ -14,8 +14,11 @@ export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
 	) {}
 
-	async execute(query: GetUserByIdQuery): Promise<User> {
-		const user = await this.userRepository.findOne({ where: { id: query.id } });
+	async execute(query: GetUserByIdQuery): Promise<Omit<User, 'password'>> {
+		const user = await this.userRepository.findOne({
+			where: { id: query.id },
+			select: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
+		});
 
 		if (!user) {
 			throw new NotFoundException(`User with ID ${query.id} not found`);
