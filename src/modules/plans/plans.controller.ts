@@ -13,6 +13,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
 	ApiBearerAuth,
+	ApiBody,
 	ApiOperation,
 	ApiResponse,
 	ApiTags,
@@ -99,6 +100,7 @@ export class PlansController {
 	@ApiOperation({
 		summary: apiSummaryWithAccess('Create a new plan', UserAccessLevel.ADMIN),
 	})
+	@ApiBody({ type: CreatePlanDto })
 	@ApiResponse({
 		status: 201,
 		description: 'Plan created',
@@ -117,6 +119,7 @@ export class PlansController {
 	@ApiOperation({
 		summary: apiSummaryWithAccess('Update a plan', UserAccessLevel.ADMIN),
 	})
+	@ApiBody({ type: UpdatePlanDto })
 	@ApiResponse({
 		status: 200,
 		description: 'Plan updated',
