@@ -3,6 +3,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpCode,
 	Param,
 	Patch,
 	Post,
@@ -21,16 +22,16 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { IsAdmin } from '../auth/decorators/is-admin.decorator';
-import { CreatePlanCommand } from './commands/create-plan.command';
+import {
+	CreatePlanCommand,
+	UpdatePlanCommand,
+	DeletePlanCommand,
+} from './commands';
 import { CreatePlanDto } from './dtos/create-plan.dto';
-import { GetAllPlansQuery } from './queries/get-all-plans.query';
-import { GetPlanByIdQuery } from './queries/get-plan-by-id.query';
+import { GetAllPlansQuery, GetPlanByIdQuery, GetPlansQuery } from './queries';
 import { GetPlanByIdDto } from './dtos/get-plan-by-id.dto';
-import { UpdatePlanCommand } from './commands/update-plan.command';
 import { UpdatePlanDto } from './dtos/update-plan.dto';
-import { DeletePlanCommand } from './commands/delete-plan.command';
 import { PlanResponseDto } from './dtos/plan-response.dto';
-import { GetPlansQuery } from './queries/get-plans.query';
 import { GetPlansDto } from './dtos/get-plans.dto';
 import { PaginatedResponseDto } from '../../common/dtos/pagination.dto';
 import {
@@ -141,6 +142,7 @@ export class PlansController {
 	@Delete(':id')
 	@IsAdmin()
 	@UseGuards(JwtAuthGuard, AdminGuard)
+	@HttpCode(204)
 	@ApiOperation({
 		summary: apiSummaryWithAccess('Delete a plan', UserAccessLevel.ADMIN),
 	})
@@ -150,6 +152,5 @@ export class PlansController {
 	@ApiResponse({ status: 404, description: 'Plan not found' })
 	async deletePlan(@Param(ValidationPipe) params: GetPlanByIdDto) {
 		await this.commandBus.execute(new DeletePlanCommand(params.id));
-		return { success: true };
 	}
 }

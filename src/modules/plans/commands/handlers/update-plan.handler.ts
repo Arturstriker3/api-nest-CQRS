@@ -2,8 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
-import { Plan } from '../plans.entity';
-import { UpdatePlanCommand } from './update-plan.command';
+import { Plan } from '../../plans.entity';
+import { UpdatePlanCommand } from '../update-plan.command';
 
 @CommandHandler(UpdatePlanCommand)
 export class UpdatePlanHandler implements ICommandHandler<UpdatePlanCommand> {
@@ -14,18 +14,13 @@ export class UpdatePlanHandler implements ICommandHandler<UpdatePlanCommand> {
 
 	async execute(command: UpdatePlanCommand): Promise<Plan> {
 		const { id, updatePlanDto } = command;
-
-		const plan = await this.planRepository.findOne({
-			where: { id },
-		});
+		const plan = await this.planRepository.findOne({ where: { id } });
 
 		if (!plan) {
-			throw new NotFoundException(`Plan with ID ${id} not found`);
+			throw new NotFoundException(`Plan with ID "${id}" not found`);
 		}
 
-		// Update plan properties
-		Object.assign(plan, updatePlanDto);
-
-		return this.planRepository.save(plan);
+		const updatedPlan = this.planRepository.merge(plan, updatePlanDto);
+		return this.planRepository.save(updatedPlan);
 	}
 }

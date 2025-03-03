@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Plan } from '../plans.entity';
-import { GetAllPlansQuery } from './get-all-plans.query';
+import { Plan } from '../../plans.entity';
+import { GetAllPlansQuery } from '../get-all-plans.query';
 
 @QueryHandler(GetAllPlansQuery)
 export class GetAllPlansHandler implements IQueryHandler<GetAllPlansQuery> {
@@ -13,8 +13,7 @@ export class GetAllPlansHandler implements IQueryHandler<GetAllPlansQuery> {
 
 	async execute(): Promise<Plan[]> {
 		return this.planRepository.find({
-			where: { isActive: true },
-			order: { price: 'ASC' },
+			order: { createdAt: 'DESC' },
 		});
 	}
 }
