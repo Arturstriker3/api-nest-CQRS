@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
 import { CustomLogger } from './config/logger.config';
 import { SeedModule } from './seeds/seed.module';
+import { PlansModule } from './modules/plans/plans.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 
 @Module({
 	imports: [
@@ -47,6 +49,8 @@ import { SeedModule } from './seeds/seed.module';
 		CqrsModule,
 		AuthModule,
 		UsersModule,
+		PlansModule,
+		SubscriptionsModule,
 
 		SeedModule,
 		LoggerModule.forRootAsync({

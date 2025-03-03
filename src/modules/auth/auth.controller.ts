@@ -26,6 +26,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterUserResponseDto } from './dtos/register-user-response.dto';
 import { LoginUserResponseDto } from './dtos/login-user-response.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { apiSummaryWithAccess } from 'src/common/utils/swagger.utils';
+import { UserAccessLevel } from 'src/common/utils/swagger.utils';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -34,7 +36,9 @@ export class AuthController {
 	private readonly logger = new Logger(AuthController.name);
 
 	@Post('register')
-	@ApiOperation({ summary: 'Register user' })
+	@ApiOperation({
+		summary: apiSummaryWithAccess('Register user', UserAccessLevel.PUBLIC),
+	})
 	@ApiResponse({
 		status: 201,
 		description: 'User created',
@@ -46,7 +50,9 @@ export class AuthController {
 	}
 
 	@Post('login')
-	@ApiOperation({ summary: 'Login user' })
+	@ApiOperation({
+		summary: apiSummaryWithAccess('Login user', UserAccessLevel.PUBLIC),
+	})
 	@ApiResponse({
 		status: 200,
 		description: 'User logged in',
@@ -60,7 +66,9 @@ export class AuthController {
 	@Post('logout')
 	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
-	@ApiOperation({ summary: 'Logout user' })
+	@ApiOperation({
+		summary: apiSummaryWithAccess('Logout user', UserAccessLevel.USER),
+	})
 	@ApiResponse({ status: 200, description: 'User logged out successfully' })
 	@ApiResponse({ status: 401, description: 'Unauthorized' })
 	async logout(@CurrentUser() user: CurrentUserDto) {
@@ -69,7 +77,9 @@ export class AuthController {
 	}
 
 	@Post('refresh')
-	@ApiOperation({ summary: 'Refresh token' })
+	@ApiOperation({
+		summary: apiSummaryWithAccess('Refresh token', UserAccessLevel.PUBLIC),
+	})
 	@ApiBody({ type: RefreshTokenDto })
 	@ApiResponse({
 		status: 201,

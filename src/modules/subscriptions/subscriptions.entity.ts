@@ -3,42 +3,34 @@ import {
 	PrimaryGeneratedColumn,
 	Column,
 	OneToOne,
+	ManyToOne,
 	JoinColumn,
 	CreateDateColumn,
 	UpdateDateColumn,
-	BeforeInsert,
 } from 'typeorm';
 import { User } from '../users/users.entity';
-
-export enum SubscriptionPlan {
-	FREE = 'free',
-	STANDARD = 'standard',
-	PREMIUM = 'premium',
-}
-
-export const SubscriptionLimits: Record<SubscriptionPlan, number> = {
-	[SubscriptionPlan.FREE]: 1,
-	[SubscriptionPlan.STANDARD]: 5,
-	[SubscriptionPlan.PREMIUM]: 20,
-};
+import { Plan } from '../plans/plans.entity';
 
 @Entity()
 export class Subscription {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@Column({
-		type: 'enum',
-		enum: SubscriptionPlan,
-		default: SubscriptionPlan.FREE,
-	})
-	plan: SubscriptionPlan;
+	@ManyToOne(() => Plan, (plan) => plan.subscriptions)
+	@JoinColumn()
+	plan: Plan;
 
-	@Column({ type: 'int', default: SubscriptionLimits[SubscriptionPlan.FREE] })
-	maxProjects: number;
+	@Column({ type: 'int', nullable: true })
+	maxProjects?: number;
+
+	@Column({ type: 'timestamp', nullable: true })
+	startsAt: Date;
 
 	@Column({ type: 'timestamp', nullable: true })
 	expiresAt?: Date;
+
+	@Column({ type: 'boolean', default: true })
+	isActive: boolean;
 
 	@OneToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
 	@JoinColumn()
@@ -49,9 +41,4 @@ export class Subscription {
 
 	@UpdateDateColumn()
 	updatedAt: Date;
-
-	@BeforeInsert()
-	setDefaultMaxProjects() {
-		this.maxProjects = SubscriptionLimits[this.plan] ?? 1;
-	}
 }

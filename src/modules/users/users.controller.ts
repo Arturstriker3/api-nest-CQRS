@@ -21,6 +21,8 @@ import { GetCurrentUserQuery } from './queries/get-current-user.query';
 import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
 import { IsAdmin } from '../auth/decorators/is-admin.decorator';
 import { GetUserResponseDto } from './dtos/get-user-by-id-response.dto';
+import { apiSummaryWithAccess } from 'src/common/utils/swagger.utils';
+import { UserAccessLevel } from 'src/common/utils/swagger.utils';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -30,7 +32,12 @@ export class UserController {
 
 	@Get('me')
 	@UseGuards(JwtAuthGuard)
-	@ApiOperation({ summary: 'Get current authenticated user' })
+	@ApiOperation({
+		summary: apiSummaryWithAccess(
+			'Get current authenticated user',
+			UserAccessLevel.USER,
+		),
+	})
 	@ApiResponse({ status: 200, description: 'User found', type: CurrentUserDto })
 	@ApiResponse({
 		status: 401,
@@ -43,7 +50,9 @@ export class UserController {
 	@Get(':id')
 	@IsAdmin()
 	@UseGuards(JwtAuthGuard, AdminGuard)
-	@ApiOperation({ summary: 'Get user by id' })
+	@ApiOperation({
+		summary: apiSummaryWithAccess('Get user by id', UserAccessLevel.ADMIN),
+	})
 	@ApiResponse({
 		status: 200,
 		description: 'User found',
