@@ -11,9 +11,7 @@ export class GetPlansHandler implements IQueryHandler<GetPlansQuery> {
 		private readonly planRepository: Repository<Plan>,
 	) {}
 
-	async execute(
-		query: GetPlansQuery,
-	): Promise<{ plans: Plan[]; total: number }> {
+	async execute(query: GetPlansQuery) {
 		const { getPlansDto } = query;
 		const {
 			page = 1,
@@ -30,11 +28,20 @@ export class GetPlansHandler implements IQueryHandler<GetPlansQuery> {
 
 		queryBuilder.skip(skip).take(limit);
 
-		const [plans, total] = await queryBuilder.getManyAndCount();
+		const [items, total] = await queryBuilder.getManyAndCount();
+
+		const totalPages = Math.ceil(total / limit);
+		const hasNext = page < totalPages;
+		const hasPrevious = page > 1;
 
 		return {
-			plans,
+			items,
 			total,
+			page,
+			limit,
+			totalPages,
+			hasNext,
+			hasPrevious,
 		};
 	}
 }

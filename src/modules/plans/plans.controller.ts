@@ -33,7 +33,7 @@ import { GetPlanByIdDto } from './dtos/get-plan-by-id.dto';
 import { UpdatePlanDto } from './dtos/update-plan.dto';
 import { PlanResponseDto } from './dtos/plan-response.dto';
 import { GetPlansDto } from './dtos/get-plans.dto';
-import { PaginatedResponseDto } from '../../common/dtos/pagination.dto';
+import { PaginatedPlansResponseDto } from './dtos/paginated-plans-response.dto';
 import {
 	UserAccessLevel,
 	apiSummaryWithAccess,
@@ -58,7 +58,7 @@ export class PlansController {
 	@ApiResponse({
 		status: 200,
 		description: 'Plans found',
-		type: PaginatedResponseDto,
+		type: PaginatedPlansResponseDto,
 	})
 	async getPlans(@Query(ValidationPipe) query: GetPlansDto) {
 		return this.queryBus.execute(new GetPlansQuery(query));
