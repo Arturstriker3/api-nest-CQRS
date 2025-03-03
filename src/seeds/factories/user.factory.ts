@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserRole } from '../../modules/users/users.entity';
@@ -7,6 +7,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserFactory {
+	private readonly logger = new Logger(UserFactory.name);
+
 	constructor(
 		@InjectRepository(User)
 		private readonly userRepository: Repository<User>,
@@ -18,7 +20,7 @@ export class UserFactory {
 		const password = this.configService.get<string>('SUPER_ADMIN_PASSWORD');
 
 		if (!email || !password) {
-			console.error(
+			this.logger.error(
 				'⚠️ Users Factory: SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD envs are required',
 			);
 			return;
@@ -26,7 +28,7 @@ export class UserFactory {
 
 		const existingUser = await this.userRepository.findOne({ where: { email } });
 		if (existingUser) {
-			console.log('✅ Users Factory: Super Admin already exists');
+			this.logger.log('✅ Users Factory: Super Admin already exists');
 			return;
 		}
 
@@ -41,6 +43,6 @@ export class UserFactory {
 
 		await this.userRepository.save(superAdmin);
 
-		console.log('✅ Users Factory: Super Admin created successfully');
+		this.logger.log('✅ Users Factory: Super Admin created successfully');
 	}
 }
