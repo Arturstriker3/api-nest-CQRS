@@ -5,20 +5,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { User } from '../users/users.entity';
-import { RegisterUserHandler } from './commands/register-user.command';
-import { LoginUserHandler } from './commands/login-user.command';
+import { CommandHandlers } from './commands/handlers';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RefreshTokenHandler } from './commands/refresh-token.command';
 import authConfig from '../../config/auth.config';
-import { LogoutUserHandler } from './commands/logout-user.command';
-
-const CommandHandlers = [
-	RegisterUserHandler,
-	LoginUserHandler,
-	RefreshTokenHandler,
-	LogoutUserHandler,
-];
 
 @Module({
 	imports: [
