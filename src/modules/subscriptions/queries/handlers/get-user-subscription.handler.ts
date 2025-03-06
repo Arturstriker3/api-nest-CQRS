@@ -1,9 +1,10 @@
-import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Subscription } from '../subscriptions.entity';
-import { GetUserSubscriptionQuery } from './get-user-subscription.query';
+import { Subscription } from '../../subscriptions.entity';
+import { NotFoundException } from '@nestjs/common';
+import { GetUserSubscriptionQuery } from '../get-user-subscription.query';
+import { GetSubscriptionResponseDto } from '../../dtos/get-subscription-response.dto';
 
 @QueryHandler(GetUserSubscriptionQuery)
 export class GetUserSubscriptionHandler
@@ -14,20 +15,18 @@ export class GetUserSubscriptionHandler
 		private readonly subscriptionRepository: Repository<Subscription>,
 	) {}
 
-	async execute(query: GetUserSubscriptionQuery): Promise<Subscription> {
-		const { userId } = query;
-
+	async execute(
+		query: GetUserSubscriptionQuery,
+	): Promise<GetSubscriptionResponseDto> {
 		const subscription = await this.subscriptionRepository.findOne({
-			where: { user: { id: userId } },
+			where: { user: { id: query.userId } },
 			relations: ['plan', 'user'],
 		});
 
 		if (!subscription) {
-			throw new NotFoundException(
-				`Subscription for user with ID ${userId} not found`,
-			);
+			throw new NotFoundException(`Subscription for current user not found`);
 		}
 
-		return subscription;
+		return new GetSubscriptionResponseDto(subscription);
 	}
 }

@@ -20,17 +20,11 @@ export class Subscription {
 	@JoinColumn()
 	plan: Plan;
 
-	@Column({ type: 'int', nullable: true })
-	maxProjects?: number;
-
 	@Column({ type: 'timestamp', nullable: true })
 	startsAt: Date;
 
 	@Column({ type: 'timestamp', nullable: true })
 	expiresAt?: Date;
-
-	@Column({ type: 'boolean', default: true })
-	isActive: boolean;
 
 	@OneToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
 	@JoinColumn()
