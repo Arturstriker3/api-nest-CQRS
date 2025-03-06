@@ -9,12 +9,14 @@ import { CommandHandlers } from './commands/handlers';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import authConfig from '../../config/auth.config';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, load: [authConfig] }),
 		TypeOrmModule.forFeature([User]),
 		CqrsModule,
+		SubscriptionsModule,
 		PassportModule.register({ defaultStrategy: 'jwt' }),
 		JwtModule.registerAsync({
 			inject: [ConfigService],

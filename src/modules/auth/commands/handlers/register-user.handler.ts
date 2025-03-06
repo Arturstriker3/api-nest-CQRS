@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../users/users.entity';
@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { ConflictException } from '@nestjs/common';
 import { RegisterUserCommand } from '../register-user.command';
 import { RegisterUserResponseDto } from '../../dtos/register-user-response.dto';
+import { CreateDefaultSubscriptionCommand } from '../../../subscriptions/commands';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler
@@ -13,6 +14,7 @@ export class RegisterUserHandler
 {
 	constructor(
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
+		private readonly commandBus: CommandBus,
 	) {}
 
 	async execute(command: RegisterUserCommand): Promise<RegisterUserResponseDto> {
@@ -32,6 +34,11 @@ export class RegisterUserHandler
 		});
 
 		const savedUser = await this.userRepository.save(user);
+
+		// Criar a subscription padrão para o novo usuário
+		await this.commandBus.execute(
+			new CreateDefaultSubscriptionCommand(savedUser.id),
+		);
 
 		return new RegisterUserResponseDto(savedUser);
 	}

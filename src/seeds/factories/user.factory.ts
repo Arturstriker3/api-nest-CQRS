@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User, UserRole } from '../../modules/users/users.entity';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { SubscriptionsService } from '../../modules/subscriptions/subscriptions.service';
 
 @Injectable()
 export class UserFactory {
@@ -13,6 +14,7 @@ export class UserFactory {
 		@InjectRepository(User)
 		private readonly userRepository: Repository<User>,
 		private readonly configService: ConfigService,
+		private readonly subscriptionsService: SubscriptionsService,
 	) {}
 
 	async createSuperAdmin(): Promise<void> {
@@ -41,8 +43,15 @@ export class UserFactory {
 			role: UserRole.ADMIN,
 		});
 
-		await this.userRepository.save(superAdmin);
+		const savedUser = await this.userRepository.save(superAdmin);
 
-		this.logger.log('✅ Users Factory: Super Admin created successfully');
+		try {
+			await this.subscriptionsService.createDefaultSubscription(savedUser.id);
+			this.logger.log('✅ Users Factory: Subscription created for Super Admin');
+		} catch (error) {
+			this.logger.error(
+				`⚠️ Users Factory: Failed to create subscription for Super Admin: ${error.message}`,
+			);
+		}
 	}
 }

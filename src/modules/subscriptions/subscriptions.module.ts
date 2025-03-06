@@ -5,15 +5,22 @@ import { Plan } from '../plans/plans.entity';
 import { User } from '../users/users.entity';
 import { SubscriptionsController } from './subscriptions.controller';
 import { Subscription } from './subscriptions.entity';
+import { SubscriptionsService } from './subscriptions.service';
 
 import {
 	GetUserSubscriptionHandler,
 	GetSubscriptionByUserIdHandler,
 } from './queries';
 
-import { UpdateSubscriptionHandler } from './commands';
+import {
+	UpdateSubscriptionHandler,
+	CreateDefaultSubscriptionHandler,
+} from './commands/handlers';
 
-const CommandHandlers = [UpdateSubscriptionHandler];
+const CommandHandlers = [
+	UpdateSubscriptionHandler,
+	CreateDefaultSubscriptionHandler,
+];
 const QueryHandlers = [
 	GetUserSubscriptionHandler,
 	GetSubscriptionByUserIdHandler,
@@ -22,7 +29,7 @@ const QueryHandlers = [
 @Module({
 	imports: [TypeOrmModule.forFeature([Subscription, Plan, User]), CqrsModule],
 	controllers: [SubscriptionsController],
-	providers: [...CommandHandlers, ...QueryHandlers],
-	exports: [TypeOrmModule],
+	providers: [...CommandHandlers, ...QueryHandlers, SubscriptionsService],
+	exports: [TypeOrmModule, ...CommandHandlers, SubscriptionsService],
 })
 export class SubscriptionsModule {}

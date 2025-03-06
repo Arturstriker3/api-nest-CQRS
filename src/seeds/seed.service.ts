@@ -12,9 +12,14 @@ export class SeedService {
 	) {}
 
 	async seed() {
-		this.logger.log('🔄 Starting seed...');
-		await this.userFactory.createSuperAdmin();
-		await this.planFactory.createDefaultPlans();
-		this.logger.log('🌱 Ended seed');
+		try {
+			this.logger.log('🔄 Starting seed...');
+			await this.planFactory.createDefaultPlans();
+			await this.userFactory.createSuperAdmin();
+			this.logger.log('🌱 Seed completed successfully');
+		} catch (error) {
+			this.logger.error(`❌ Seed failed: ${error.message}`);
+			throw error;
+		}
 	}
 }

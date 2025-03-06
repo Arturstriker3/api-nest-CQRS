@@ -1,2 +1,4 @@
 export * from './update-subscription.command';
-export * from './handlers/update-subscription.handler';
+export * from './create-default-subscription.command';
+
+export * from './handlers';

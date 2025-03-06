@@ -51,8 +51,8 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 		UsersModule,
 		PlansModule,
 		SubscriptionsModule,
-
 		SeedModule,
+
 		LoggerModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
