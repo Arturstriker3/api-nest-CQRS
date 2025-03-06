@@ -30,7 +30,7 @@ export class UserFactory {
 
 		const existingUser = await this.userRepository.findOne({ where: { email } });
 		if (existingUser) {
-			this.logger.log('✅ Users Factory: Super Admin already exists');
+			this.logger.log('✅ Users Factory: Super Admin already exist');
 			return;
 		}
 
@@ -47,7 +47,7 @@ export class UserFactory {
 
 		try {
 			await this.subscriptionsService.createDefaultSubscription(savedUser.id);
-			this.logger.log('✅ Users Factory: Subscription created for Super Admin');
+			this.logger.log('✅ Users Factory: Super Admin created successfully');
 		} catch (error) {
 			this.logger.error(
 				`⚠️ Users Factory: Failed to create subscription for Super Admin: ${error.message}`,

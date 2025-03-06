@@ -21,9 +21,9 @@ export class SubscriptionsService {
 	) {}
 
 	/**
-	 * Cria uma assinatura padrão para um novo usuário
-	 * @param userId ID do usuário para criar a assinatura
-	 * @returns A assinatura criada
+	 * Creates a default subscription for a new user
+	 * @param userId ID of the user to create the subscription for
+	 * @returns The created subscription
 	 */
 	async createDefaultSubscription(userId: string): Promise<Subscription> {
 		const user = await this.userRepository.findOne({ where: { id: userId } });
