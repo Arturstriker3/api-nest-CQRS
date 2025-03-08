@@ -17,7 +17,7 @@ export class UpdatePlanHandler implements ICommandHandler<UpdatePlanCommand> {
 		const plan = await this.planRepository.findOne({ where: { id } });
 
 		if (!plan) {
-			throw new NotFoundException(`Plano com ID "${id}" não encontrado`);
+			throw new NotFoundException(`Plan with ID "${id}" not found`);
 		}
 
 		if (updatePlanDto.name && updatePlanDto.name !== plan.name) {

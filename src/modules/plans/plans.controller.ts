@@ -153,16 +153,16 @@ export class PlansController {
 	@IsAdmin()
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@ApiOperation({
-		summary: apiSummaryWithAccess('Desativar um plano', UserAccessLevel.ADMIN),
+		summary: apiSummaryWithAccess('Deactivate a plan', UserAccessLevel.ADMIN),
 	})
 	@ApiResponse({
 		status: 200,
-		description: 'Plano desativado',
+		description: 'Plan deactivated',
 		type: PlanResponseDto,
 	})
-	@ApiResponse({ status: 401, description: 'Não autorizado' })
-	@ApiResponse({ status: 403, description: 'Proibido - Apenas admin' })
-	@ApiResponse({ status: 404, description: 'Plano não encontrado' })
+	@ApiResponse({ status: 401, description: 'Unauthorized' })
+	@ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
+	@ApiResponse({ status: 404, description: 'Plan not found' })
 	async deactivatePlan(@Param(ValidationPipe) params: GetPlanByIdDto) {
 		return this.commandBus.execute(new DeactivatePlanCommand(params.id));
 	}
@@ -172,16 +172,16 @@ export class PlansController {
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@HttpCode(204)
 	@ApiOperation({
-		summary: apiSummaryWithAccess('Deletar um plano', UserAccessLevel.ADMIN),
+		summary: apiSummaryWithAccess('Delete a plan', UserAccessLevel.ADMIN),
 	})
-	@ApiResponse({ status: 204, description: 'Plano deletado' })
+	@ApiResponse({ status: 204, description: 'Plan deleted' })
 	@ApiResponse({
 		status: 400,
-		description: 'Requisição inválida - Plano em uso',
+		description: 'Invalid request - Plan in use',
 	})
-	@ApiResponse({ status: 401, description: 'Não autorizado' })
-	@ApiResponse({ status: 403, description: 'Proibido - Apenas admin' })
-	@ApiResponse({ status: 404, description: 'Plano não encontrado' })
+	@ApiResponse({ status: 401, description: 'Unauthorized' })
+	@ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
+	@ApiResponse({ status: 404, description: 'Plan not found' })
 	async deletePlan(@Param(ValidationPipe) params: GetPlanByIdDto) {
 		await this.commandBus.execute(new DeletePlanCommand(params.id));
 	}

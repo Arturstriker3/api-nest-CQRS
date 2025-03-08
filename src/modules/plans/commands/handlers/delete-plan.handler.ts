@@ -23,7 +23,7 @@ export class DeletePlanHandler implements ICommandHandler<DeletePlanCommand> {
 		});
 
 		if (!plan) {
-			throw new NotFoundException(`Plano com ID "${id}" não encontrado`);
+			throw new NotFoundException(`Plan with ID "${id}" not found`);
 		}
 
 		const subscriptionsCount = await this.subscriptionRepository.count({

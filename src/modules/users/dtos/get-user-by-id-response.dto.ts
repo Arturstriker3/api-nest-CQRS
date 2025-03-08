@@ -4,38 +4,38 @@ import { UserRole } from '../users.entity';
 export class GetUserResponseDto {
 	@ApiProperty({
 		example: '550e8400-e29b-41d4-a716-446655440000',
-		description: 'ID do usuário',
+		description: 'User ID',
 	})
 	id: string;
 
 	@ApiProperty({
 		example: 'John Doe',
-		description: 'Nome do usuário',
+		description: 'User name',
 	})
 	name: string;
 
 	@ApiProperty({
 		example: 'john@example.com',
-		description: 'Email do usuário',
+		description: 'User email',
 	})
 	email: string;
 
 	@ApiProperty({
 		example: 'user',
-		description: 'Role do usuário',
+		description: 'User role',
 		enum: UserRole,
 	})
 	role: UserRole;
 
 	@ApiProperty({
 		example: '2024-03-02T23:45:28.000Z',
-		description: 'Data de criação',
+		description: 'Creation date',
 	})
 	createdAt: Date;
 
 	@ApiProperty({
 		example: '2024-03-02T23:45:28.000Z',
-		description: 'Data da última atualização',
+		description: 'Last update date',
 	})
 	updatedAt: Date;
 }
