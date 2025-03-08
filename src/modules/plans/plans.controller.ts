@@ -7,6 +7,7 @@ import {
 	Param,
 	Patch,
 	Post,
+	Put,
 	Query,
 	UseGuards,
 	ValidationPipe,
@@ -26,6 +27,7 @@ import {
 	CreatePlanCommand,
 	UpdatePlanCommand,
 	DeletePlanCommand,
+	DeactivatePlanCommand,
 } from './commands';
 import { CreatePlanDto } from './dtos/create-plan.dto';
 import { GetAllPlansQuery, GetPlanByIdQuery, GetPlansQuery } from './queries';
@@ -118,7 +120,7 @@ export class PlansController {
 		return this.commandBus.execute(new CreatePlanCommand(createPlanDto));
 	}
 
-	@Patch(':id')
+	@Put(':id')
 	@IsAdmin()
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@ApiOperation({
@@ -147,17 +149,39 @@ export class PlansController {
 		);
 	}
 
+	@Patch(':id/deactivate')
+	@IsAdmin()
+	@UseGuards(JwtAuthGuard, AdminGuard)
+	@ApiOperation({
+		summary: apiSummaryWithAccess('Desativar um plano', UserAccessLevel.ADMIN),
+	})
+	@ApiResponse({
+		status: 200,
+		description: 'Plano desativado',
+		type: PlanResponseDto,
+	})
+	@ApiResponse({ status: 401, description: 'Não autorizado' })
+	@ApiResponse({ status: 403, description: 'Proibido - Apenas admin' })
+	@ApiResponse({ status: 404, description: 'Plano não encontrado' })
+	async deactivatePlan(@Param(ValidationPipe) params: GetPlanByIdDto) {
+		return this.commandBus.execute(new DeactivatePlanCommand(params.id));
+	}
+
 	@Delete(':id')
 	@IsAdmin()
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@HttpCode(204)
 	@ApiOperation({
-		summary: apiSummaryWithAccess('Delete a plan', UserAccessLevel.ADMIN),
+		summary: apiSummaryWithAccess('Deletar um plano', UserAccessLevel.ADMIN),
 	})
-	@ApiResponse({ status: 204, description: 'Plan deleted' })
-	@ApiResponse({ status: 401, description: 'Unauthorized' })
-	@ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
-	@ApiResponse({ status: 404, description: 'Plan not found' })
+	@ApiResponse({ status: 204, description: 'Plano deletado' })
+	@ApiResponse({
+		status: 400,
+		description: 'Requisição inválida - Plano em uso',
+	})
+	@ApiResponse({ status: 401, description: 'Não autorizado' })
+	@ApiResponse({ status: 403, description: 'Proibido - Apenas admin' })
+	@ApiResponse({ status: 404, description: 'Plano não encontrado' })
 	async deletePlan(@Param(ValidationPipe) params: GetPlanByIdDto) {
 		await this.commandBus.execute(new DeletePlanCommand(params.id));
 	}
