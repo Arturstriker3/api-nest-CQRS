@@ -6,21 +6,13 @@ import { User } from '../users/users.entity';
 import { SubscriptionsController } from './subscriptions.controller';
 import { Subscription } from './subscriptions.entity';
 import { SubscriptionsService } from './subscriptions.service';
-
 import {
 	GetUserSubscriptionHandler,
 	GetSubscriptionByUserIdHandler,
 } from './queries';
+import { UpdateSubscriptionHandler } from './commands/handlers';
 
-import {
-	UpdateSubscriptionHandler,
-	CreateDefaultSubscriptionHandler,
-} from './commands/handlers';
-
-const CommandHandlers = [
-	UpdateSubscriptionHandler,
-	CreateDefaultSubscriptionHandler,
-];
+const CommandHandlers = [UpdateSubscriptionHandler];
 const QueryHandlers = [
 	GetUserSubscriptionHandler,
 	GetSubscriptionByUserIdHandler,
