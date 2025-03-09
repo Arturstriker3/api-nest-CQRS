@@ -9,6 +9,7 @@ import { CustomLogger } from './config/logger.config';
 import { SeedModule } from './seeds/seed.module';
 import { PlansModule } from './modules/plans/plans.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
 	imports: [
@@ -51,6 +52,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 		UsersModule,
 		PlansModule,
 		SubscriptionsModule,
+		PaymentsModule,
 		SeedModule,
 
 		LoggerModule.forRootAsync({

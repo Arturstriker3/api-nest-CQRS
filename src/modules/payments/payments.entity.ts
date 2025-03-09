@@ -5,7 +5,11 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 	DeleteDateColumn,
+	ManyToOne,
+	JoinColumn,
 } from 'typeorm';
+import { User } from '../users/users.entity';
+import { Subscription } from '../subscriptions/subscriptions.entity';
 
 export enum PaymentStatus {
 	PENDING = 'pending',
@@ -34,35 +38,50 @@ export class Payment {
 	@Column({ type: 'uuid' })
 	userId: string;
 
+	@ManyToOne(() => User)
+	@JoinColumn({ name: 'userId' })
+	user: User;
+
 	@Column({ type: 'uuid', nullable: true })
-	subscriptionId?: string;
+	subscriptionId: string;
+
+	@ManyToOne(() => Subscription, { nullable: true })
+	@JoinColumn({ name: 'subscriptionId' })
+	subscription: Subscription;
 
 	@Column({ type: 'decimal', precision: 10, scale: 2 })
 	amount: number;
 
-	@Column({ type: 'varchar', length: 10 })
+	@Column({ length: 10 })
 	currency: string;
 
-	@Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
+	@Column({
+		type: 'enum',
+		enum: PaymentStatus,
+		default: PaymentStatus.PENDING,
+	})
 	status: PaymentStatus;
 
-	@Column({ type: 'enum', enum: PaymentProvider })
+	@Column({
+		type: 'enum',
+		enum: PaymentProvider,
+	})
 	provider: PaymentProvider;
 
-	@Column({ type: 'varchar', length: 255, nullable: true })
-	providerPaymentId?: string;
+	@Column({ length: 255, nullable: true })
+	providerPaymentId: string;
 
-	@Column({ type: 'varchar', length: 255, nullable: true })
-	providerCustomerId?: string;
+	@Column({ length: 255, nullable: true })
+	providerCustomerId: string;
 
 	@Column({ type: 'jsonb', nullable: true })
-	providerMetadata?: Record<string, any>;
+	providerMetadata: Record<string, any>;
 
-	@Column({ type: 'varchar', length: 255, nullable: true })
-	description?: string;
+	@Column({ length: 255, nullable: true })
+	description: string;
 
-	@Column({ type: 'varchar', length: 255, nullable: true })
-	errorMessage?: string;
+	@Column({ type: 'text', nullable: true })
+	errorMessage: string;
 
 	@CreateDateColumn()
 	createdAt: Date;
@@ -71,5 +90,5 @@ export class Payment {
 	updatedAt: Date;
 
 	@DeleteDateColumn()
-	deletedAt?: Date;
+	deletedAt: Date;
 }

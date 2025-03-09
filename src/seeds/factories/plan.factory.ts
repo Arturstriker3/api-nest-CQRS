@@ -33,7 +33,7 @@ export class PlanFactory {
 		const basicPlan = this.planRepository.create({
 			name: 'Basic',
 			description: 'Basic plan for beginners',
-			price: 29.9,
+			price: 5.99,
 			maxProjects: 5,
 			durationDays: 30,
 			isActive: true,
@@ -42,7 +42,7 @@ export class PlanFactory {
 		const proPlan = this.planRepository.create({
 			name: 'Professional',
 			description: 'Plan for advanced users',
-			price: 59.9,
+			price: 11.99,
 			maxProjects: 15,
 			durationDays: 30,
 			isActive: true,
@@ -51,7 +51,7 @@ export class PlanFactory {
 		const premiumPlan = this.planRepository.create({
 			name: 'Premium',
 			description: 'Premium plan with unlimited resources',
-			price: 99.9,
+			price: 19.99,
 			maxProjects: 30,
 			durationDays: 30,
 			isActive: true,
