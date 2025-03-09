@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { User } from '../../../users/users.entity';
 import { Plan } from '../../../plans/plans.entity';
+import { Subscription } from '../../../subscriptions/subscriptions.entity';
 
 @CommandHandler(CreatePaymentIntentCommand)
 export class CreatePaymentIntentHandler
@@ -26,6 +27,8 @@ export class CreatePaymentIntentHandler
 		private usersRepository: Repository<User>,
 		@InjectRepository(Plan)
 		private planRepository: Repository<Plan>,
+		@InjectRepository(Subscription)
+		private subscriptionRepository: Repository<Subscription>,
 		private stripeService: StripeService,
 	) {}
 
@@ -50,8 +53,19 @@ export class CreatePaymentIntentHandler
 
 		const amount = plan.price;
 
+		const subscription = await this.subscriptionRepository.findOne({
+			where: { user: { id: command.userId } },
+		});
+
+		if (!subscription) {
+			throw new BadRequestException(
+				'No subscription found for the user. Please register a subscription before making a payment.',
+			);
+		}
+
 		const payment = this.paymentsRepository.create({
 			userId: command.userId,
+			subscriptionId: subscription.id, // Usando o ID da assinatura encontrada
 			amount: amount,
 			currency: command.currency,
 			provider: command.provider,

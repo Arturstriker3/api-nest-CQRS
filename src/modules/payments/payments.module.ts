@@ -9,6 +9,7 @@ import { StripeService } from './services/stripe.service';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '../auth/auth.module';
 import { Plan } from '../plans/plans.entity';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { Plan } from '../plans/plans.entity';
 		CqrsModule,
 		ConfigModule,
 		AuthModule,
+		SubscriptionsModule,
 	],
 	controllers: [PaymentsController],
 	providers: [...CommandHandlers, StripeService],

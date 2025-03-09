@@ -28,7 +28,7 @@ GET http://localhost:4000/api/plans/all
 Authorization: Bearer {{authToken}}
 
 ### Store selected plan ID (first plan)
-@planId = {{getPlans.response.body.2.id}}
+@planId = {{getPlans.response.body.1.id}}
 
 ### -- CREATE PAYMENT INTENT --
 
