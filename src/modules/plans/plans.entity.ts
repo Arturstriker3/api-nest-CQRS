@@ -22,6 +22,9 @@ export class Plan {
 	@Column({ type: 'decimal', precision: 10, scale: 2 })
 	price: number;
 
+	@Column({ type: 'varchar', length: 3, default: 'USD' })
+	currency: string;
+
 	@Column({ type: 'integer' })
 	credits: number;
 

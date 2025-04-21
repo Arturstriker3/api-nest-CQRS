@@ -65,9 +65,9 @@ export class CreatePaymentIntentHandler
 
 		const payment = this.paymentsRepository.create({
 			userId: command.userId,
-			subscriptionId: subscription.id, // Usando o ID da assinatura encontrada
+			subscriptionId: subscription.id,
 			amount: amount,
-			currency: command.currency,
+			currency: plan.currency,
 			provider: command.provider,
 			description: command.description || `Subscription to ${plan.name} plan`,
 			status: PaymentStatus.PENDING,
@@ -103,7 +103,7 @@ export class CreatePaymentIntentHandler
 			const { id, client_secret, status } =
 				await this.stripeService.createPaymentIntent({
 					amount: amount,
-					currency: command.currency,
+					currency: plan.currency,
 					description: payment.description,
 					metadata: {
 						userId: command.userId,
@@ -145,9 +145,7 @@ export class CreatePaymentIntentHandler
 
 			if (error.type && error.type.startsWith('Stripe')) {
 				if (error.code === 'currency_not_supported') {
-					throw new BadRequestException(
-						`Currency not supported: ${command.currency}`,
-					);
+					throw new BadRequestException(`Currency not supported: ${plan.currency}`);
 				}
 				if (error.code === 'parameter_invalid_integer') {
 					throw new BadRequestException('Invalid payment amount');

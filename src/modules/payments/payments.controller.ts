@@ -72,7 +72,6 @@ export class PaymentsController {
 		return this.commandBus.execute(
 			new CreatePaymentIntentCommand(
 				userIdToUse,
-				createPaymentIntentDto.currency,
 				createPaymentIntentDto.planId,
 				createPaymentIntentDto.description,
 				undefined, // provider (default: stripe)

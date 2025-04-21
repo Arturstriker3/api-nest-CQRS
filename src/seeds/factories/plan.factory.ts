@@ -25,6 +25,7 @@ export class PlanFactory {
 			name: 'Free',
 			description: 'Free plan with basic features',
 			price: 0,
+			currency: 'USD',
 			credits: 200,
 			isActive: true,
 		});
@@ -33,6 +34,7 @@ export class PlanFactory {
 			name: 'Basic',
 			description: 'Basic plan for beginners',
 			price: 5.99,
+			currency: 'USD',
 			credits: 1000,
 			isActive: true,
 		});
@@ -41,6 +43,7 @@ export class PlanFactory {
 			name: 'Professional',
 			description: 'Plan for advanced users',
 			price: 11.99,
+			currency: 'USD',
 			credits: 2000,
 			isActive: true,
 		});
@@ -49,6 +52,7 @@ export class PlanFactory {
 			name: 'Premium',
 			description: 'Premium plan with unlimited resources',
 			price: 19.99,
+			currency: 'USD',
 			credits: 5000,
 			isActive: true,
 		});

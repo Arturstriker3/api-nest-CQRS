@@ -9,7 +9,6 @@ import {
 	JoinColumn,
 } from 'typeorm';
 import { User } from '../users/users.entity';
-import { Subscription } from '../subscriptions/subscriptions.entity';
 
 export enum PaymentStatus {
 	PENDING = 'pending',
@@ -44,10 +43,6 @@ export class Payment {
 
 	@Column({ type: 'uuid', nullable: true })
 	subscriptionId: string;
-
-	@ManyToOne(() => Subscription, { nullable: true })
-	@JoinColumn({ name: 'subscriptionId' })
-	subscription: Subscription;
 
 	@Column({ type: 'decimal', precision: 10, scale: 2 })
 	amount: number;
