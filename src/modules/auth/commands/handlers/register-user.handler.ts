@@ -8,7 +8,6 @@ import { RegisterUserCommand } from '../register-user.command';
 import { RegisterUserResponseDto } from '../../dtos/register-user-response.dto';
 import { SubscriptionsService } from '../../../subscriptions/subscriptions.service';
 import { Plan } from '../../../plans/plans.entity';
-import { Subscription } from '../../../subscriptions/subscriptions.entity';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler
@@ -19,8 +18,6 @@ export class RegisterUserHandler
 		private readonly commandBus: CommandBus,
 		private readonly subscriptionsService: SubscriptionsService,
 		@InjectRepository(Plan) private readonly planRepository: Repository<Plan>,
-		@InjectRepository(Subscription)
-		private readonly subscriptionRepository: Repository<Subscription>,
 	) {}
 
 	async execute(command: RegisterUserCommand): Promise<RegisterUserResponseDto> {
@@ -45,17 +42,11 @@ export class RegisterUserHandler
 			name,
 			email,
 			password: hashedPassword,
-			credits: freePlan.credits,
 		});
 
 		const savedUser = await this.userRepository.save(user);
 
-		const subscription = this.subscriptionRepository.create({
-			user: savedUser,
-			plan: freePlan,
-		});
-
-		await this.subscriptionRepository.save(subscription);
+		await this.subscriptionsService.updateUserCredits(savedUser.id, freePlan.id);
 
 		return new RegisterUserResponseDto(savedUser);
 	}
