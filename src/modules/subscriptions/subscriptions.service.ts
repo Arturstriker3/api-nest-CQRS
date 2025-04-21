@@ -19,45 +19,4 @@ export class SubscriptionsService {
 		@InjectRepository(Plan)
 		private readonly planRepository: Repository<Plan>,
 	) {}
-
-	/**
-	 * Creates a default subscription for a new user
-	 * @param userId ID of the user to create the subscription for
-	 * @returns The created subscription
-	 */
-	async createDefaultSubscription(userId: string): Promise<Subscription> {
-		const user = await this.userRepository.findOne({ where: { id: userId } });
-		if (!user) {
-			throw new NotFoundException(`User with ID ${userId} not found`);
-		}
-
-		const existingSubscription = await this.subscriptionRepository.findOne({
-			where: { user: { id: userId } },
-		});
-
-		if (existingSubscription) {
-			throw new ConflictException(`User already has an active subscription`);
-		}
-
-		const planName = 'Free';
-
-		const defaultPlan = await this.planRepository.findOne({
-			where: { name: planName },
-		});
-
-		if (!defaultPlan) {
-			throw new NotFoundException(
-				`${planName} plan not found. Please ensure a plan with name "${planName}" exists in the database`,
-			);
-		}
-
-		const subscription = this.subscriptionRepository.create({
-			user,
-			plan: defaultPlan,
-			startsAt: new Date(),
-			// No need to set expiresAt
-		});
-
-		return this.subscriptionRepository.save(subscription);
-	}
 }

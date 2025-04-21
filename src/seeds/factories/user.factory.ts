@@ -44,15 +44,8 @@ export class UserFactory {
 			credits: 999999999,
 		});
 
-		const savedUser = await this.userRepository.save(superAdmin);
+		await this.userRepository.save(superAdmin);
 
-		try {
-			await this.subscriptionsService.createDefaultSubscription(savedUser.id);
-			this.logger.log('✅ Users Factory: Super Admin created successfully');
-		} catch (error) {
-			this.logger.error(
-				`⚠️ Users Factory: Failed to create subscription for Super Admin: ${error.message}`,
-			);
-		}
+		this.logger.log('✅ Users Factory: Super Admin created successfully');
 	}
 }
