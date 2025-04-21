@@ -12,15 +12,6 @@ export class CreatePaymentIntentDto {
 	planId: string;
 
 	@ApiProperty({
-		description: 'Payment currency',
-		example: 'USD',
-		default: 'USD',
-	})
-	@IsString()
-	@IsOptional()
-	currency?: string = 'USD';
-
-	@ApiProperty({
 		description: 'Payment description',
 		example: 'Premium Plan Subscription',
 	})
