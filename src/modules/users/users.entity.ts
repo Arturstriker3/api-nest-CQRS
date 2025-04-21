@@ -6,7 +6,6 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 	OneToMany,
-	OneToOne,
 } from 'typeorm';
 import { Project } from '../projects/projects.entity';
 import { Subscription } from '../subscriptions/subscriptions.entity';
@@ -36,10 +35,11 @@ export class User {
 	@OneToMany(() => Project, (project) => project.owner)
 	projects: Project[];
 
-	@OneToOne(() => Subscription, (subscription) => subscription.user, {
-		cascade: true,
-	})
-	subscription: Subscription;
+	@OneToMany(() => Subscription, (subscription) => subscription.user)
+	subscriptions: Subscription[];
+
+	@Column({ type: 'integer', default: 0 })
+	credits: number;
 
 	@Column({ type: 'varchar', length: 512, nullable: true })
 	refreshToken: string;

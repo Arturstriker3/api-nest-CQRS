@@ -1,7 +1,6 @@
 import {
 	Entity,
 	PrimaryGeneratedColumn,
-	Column,
 	OneToOne,
 	ManyToOne,
 	JoinColumn,
@@ -20,13 +19,9 @@ export class Subscription {
 	@JoinColumn()
 	plan: Plan;
 
-	@Column({ type: 'timestamp', nullable: true })
-	startsAt: Date;
-
-	@Column({ type: 'timestamp', nullable: true })
-	expiresAt?: Date;
-
-	@OneToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
+	@OneToOne(() => User, (user) => user.subscriptions, {
+		onDelete: 'CASCADE',
+	})
 	@JoinColumn()
 	user: User;
 

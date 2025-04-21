@@ -41,6 +41,7 @@ export class UserFactory {
 			email,
 			password: hashedPassword,
 			role: UserRole.ADMIN,
+			credits: 999999999,
 		});
 
 		const savedUser = await this.userRepository.save(superAdmin);

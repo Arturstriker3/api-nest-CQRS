@@ -22,11 +22,8 @@ export class Plan {
 	@Column({ type: 'decimal', precision: 10, scale: 2 })
 	price: number;
 
-	@Column({ type: 'int' })
-	maxProjects: number;
-
-	@Column({ type: 'int', default: 30 })
-	durationDays: number;
+	@Column({ type: 'integer' })
+	credits: number;
 
 	@Column({ type: 'boolean', default: true })
 	isActive: boolean;
