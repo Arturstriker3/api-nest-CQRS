@@ -5,6 +5,7 @@ import {
 	Logger,
 	ValidationPipe,
 	UseGuards,
+	HttpCode,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import {
@@ -23,6 +24,9 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user-decorator';
 import { CurrentUserDto } from '../auth/dtos/current-user.dto';
+import { VerifyPaymentIntentDto } from './dtos/verify-payment-intent.dto';
+import { VerifyPaymentIntentCommand } from './commands/verify-payment-intent.command';
+import { PaymentVerificationResponseDto } from './dtos/payment-verification-response.dto';
 
 @ApiTags('Payments')
 @ApiBearerAuth()
@@ -76,6 +80,52 @@ export class PaymentsController {
 				createPaymentIntentDto.description,
 				undefined, // provider (default: stripe)
 				createPaymentIntentDto.metadata,
+			),
+		);
+	}
+
+	@Post('verify-intent')
+	@UseGuards(JwtAuthGuard)
+	@HttpCode(200)
+	@ApiOperation({
+		summary: apiSummaryWithAccess(
+			'Verificar payment intent',
+			UserAccessLevel.USER,
+		),
+	})
+	@ApiResponse({
+		status: 200,
+		description: 'Payment intent verified',
+		type: PaymentVerificationResponseDto,
+	})
+	@ApiResponse({
+		status: 401,
+		description: 'Unauthorized - Missing or invalid token',
+	})
+	@ApiResponse({
+		status: 404,
+		description: 'Payment intent not found',
+	})
+	@ApiResponse({
+		status: 400,
+		description: 'Bad request - Invalid data',
+	})
+	@ApiResponse({
+		status: 500,
+		description: 'Internal server error - Error processing verification',
+	})
+	async verifyPaymentIntent(
+		@Body(ValidationPipe) verifyPaymentIntentDto: VerifyPaymentIntentDto,
+		@CurrentUser() user: CurrentUserDto,
+	): Promise<PaymentVerificationResponseDto> {
+		this.logger.log(
+			`Verifying payment intent: ${verifyPaymentIntentDto.paymentIntentId || verifyPaymentIntentDto.paymentId} for user: ${user.id}`,
+		);
+
+		return this.commandBus.execute(
+			new VerifyPaymentIntentCommand(
+				verifyPaymentIntentDto.paymentIntentId,
+				verifyPaymentIntentDto.paymentId,
 			),
 		);
 	}
