@@ -6,6 +6,7 @@ import {
 	JoinColumn,
 	CreateDateColumn,
 	UpdateDateColumn,
+	Column,
 } from 'typeorm';
 import { User } from '../users/users.entity';
 import { Plan } from '../plans/plans.entity';
@@ -24,6 +25,9 @@ export class Subscription {
 	})
 	@JoinColumn()
 	user: User;
+
+	@Column({ type: 'uuid', nullable: true })
+	paymentId: string;
 
 	@CreateDateColumn()
 	createdAt: Date;

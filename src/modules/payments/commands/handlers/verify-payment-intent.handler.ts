@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Payment } from '../../payments.entity';
+import { Payment, PaymentStatus } from '../../payments.entity';
 import { VerifyPaymentIntentCommand } from '../verify-payment-intent.command';
 import { StripeService } from '../../services/stripe.service';
 import {
@@ -10,6 +10,7 @@ import {
 	BadRequestException,
 	InternalServerErrorException,
 } from '@nestjs/common';
+import { SubscriptionsService } from '../../../subscriptions/subscriptions.service';
 
 @CommandHandler(VerifyPaymentIntentCommand)
 export class VerifyPaymentIntentHandler
@@ -21,6 +22,7 @@ export class VerifyPaymentIntentHandler
 		@InjectRepository(Payment)
 		private paymentsRepository: Repository<Payment>,
 		private stripeService: StripeService,
+		private subscriptionsService: SubscriptionsService,
 	) {}
 
 	async execute(command: VerifyPaymentIntentCommand) {
@@ -67,6 +69,25 @@ export class VerifyPaymentIntentHandler
 				status: paymentStatus,
 			});
 
+			// If payment is successful and we have plan information, update user credits
+			if (
+				paymentStatus === PaymentStatus.COMPLETED &&
+				payment.providerMetadata?.planId &&
+				payment.subscriptionId
+			) {
+				try {
+					await this.subscriptionsService.updateUserCreditsWithPayment(
+						payment.userId,
+						payment.providerMetadata.planId,
+						payment.id,
+					);
+				} catch {
+					throw new InternalServerErrorException(
+						'Error updating user credits. Please try again later.',
+					);
+				}
+			}
+
 			return {
 				paymentId: updatedPayment.id,
 				paymentIntentId: updatedPayment.providerPaymentId,
@@ -75,8 +96,6 @@ export class VerifyPaymentIntentHandler
 				message: `Payment verified successfully. Status: ${updatedPayment.status}`,
 			};
 		} catch (error) {
-			// this.logger.error(`Failed to verify payment: ${error.message}`, error.stack);
-
 			if (error instanceof NotFoundException) {
 				throw error;
 			}

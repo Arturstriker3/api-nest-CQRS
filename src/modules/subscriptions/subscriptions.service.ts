@@ -27,12 +27,49 @@ export class SubscriptionsService {
 			throw new NotFoundException('Plan not found');
 		}
 
-		user.credits = plan.credits;
+		user.credits += plan.credits;
 		const updatedUser = await this.userRepository.save(user);
 
 		const subscription = this.subscriptionRepository.create({
 			user: updatedUser,
 			plan: plan,
+		});
+
+		await this.subscriptionRepository.save(subscription);
+
+		return true;
+	}
+
+	async updateUserCreditsWithPayment(
+		userId: string,
+		planId: string,
+		paymentId: string,
+	): Promise<boolean> {
+		const existingSubscription = await this.subscriptionRepository.findOne({
+			where: { paymentId },
+		});
+
+		if (existingSubscription) {
+			return false;
+		}
+
+		const user = await this.userRepository.findOne({ where: { id: userId } });
+		if (!user) {
+			throw new NotFoundException('User not found');
+		}
+
+		const plan = await this.planRepository.findOne({ where: { id: planId } });
+		if (!plan) {
+			throw new NotFoundException('Plan not found');
+		}
+
+		user.credits += plan.credits;
+		const updatedUser = await this.userRepository.save(user);
+
+		const subscription = this.subscriptionRepository.create({
+			user: updatedUser,
+			plan: plan,
+			paymentId: paymentId,
 		});
 
 		await this.subscriptionRepository.save(subscription);
