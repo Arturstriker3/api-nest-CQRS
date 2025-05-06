@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../users/users.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { ConflictException } from '@nestjs/common';
 import { RegisterUserCommand } from '../register-user.command';
 import { RegisterUserResponseDto } from '../../dtos/register-user-response.dto';
