@@ -1,0 +1,41 @@
+📦 api-nest-CQRS
+├── 📂 src
+│   ├── 📂 modules (Bounded Contexts)
+│   │   ├── 📂 users (Contexto de Usuários)
+│   │   │   ├── 📄 users.entity.ts (Agregado Raiz)
+│   │   │   ├── �� queries (CQRS - Queries)
+│   │   │   ├── 📂 dtos (Value Objects)
+│   │   │   └── 📄 users.controller.ts (Application Service)
+│   │   │
+│   │   ├── 📂 projects (Contexto de Projetos)
+│   │   │   ├── 📄 projects.entity.ts (Agregado Raiz)
+│   │   │   ├── 📂 queries
+│   │   │   └── 📂 dtos
+│   │   │
+│   │   ├── 📂 subscriptions (Contexto de Assinaturas)
+│   │   │   ├── 📄 subscriptions.entity.ts (Agregado Raiz)
+│   │   │   ├── 📂 queries
+│   │   │   └── 📂 dtos
+│   │   │
+│   │   ├── 📂 plans (Contexto de Planos)
+│   │   │   ├── 📄 plans.entity.ts (Agregado Raiz)
+│   │   │   ├── 📂 queries
+│   │   │   └── 📂 dtos
+│   │   │
+│   │   ├── 📂 payments (Contexto de Pagamentos)
+│   │   │   ├── 📄 payments.entity.ts (Agregado Raiz)
+│   │   │   ├── 📂 queries
+│   │   │   └── 📂 dtos
+│   │   │
+│   │   └── 📂 auth (Contexto de Autenticação)
+│   │       ├── 📂 guards (Domain Services)
+│   │       ├── 📂 decorators
+│   │       └── 📂 dtos
+│   │
+│   ├── 📂 common (Shared Kernel)
+│   │   ├── 📂 utils
+│   │   └── 📂 decorators
+│   │
+│   ├── 📂 config (Infrastructure)
+│   ├── 📂 migrations (Infrastructure)
+│   └── 📂 seeds (Infrastructure)
