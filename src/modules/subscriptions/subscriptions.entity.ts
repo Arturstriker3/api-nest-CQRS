@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../users/users.entity';
 import { Plan } from '../plans/plans.entity';
+import { Payment } from '../payments/payments.entity';
 
 @Entity()
 export class Subscription {
@@ -25,6 +26,10 @@ export class Subscription {
 	})
 	@JoinColumn()
 	user: User;
+
+	@OneToOne(() => Payment)
+	@JoinColumn({ name: 'paymentId' })
+	payment: Payment;
 
 	@Column({ type: 'uuid', nullable: true })
 	paymentId: string;
